@@ -110,7 +110,3 @@ Screenshots below show the running app: browser trust for self-signed TLS, signu
 Images referenced in manifests are placeholders from the author’s registry; replace with your own builds from `UI/`, `weather/`, and `authentication/` Dockerfiles.
 
 ---
-
-## License
-
-This is a personal learning / portfolio project; adjust licensing as you prefer.
