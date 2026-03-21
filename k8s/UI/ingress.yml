@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: weather-app-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx # we install this when create cluster
+  # want make our ingress is tls 
+  tls:
+    - hosts:
+        - "weatherapp.local.com"
+      secretName: tls-secret #give him secret have cert and key # i can have many cert and each cert i can make it serve group of host at one time
+  rules:
+    - host: "weatherapp.local.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ui-service
+                port:
+                  number: 3000
+

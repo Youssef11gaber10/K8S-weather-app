@@ -1,0 +1,14 @@
+apiVersion: v1 
+kind: Service
+metadata:
+  name: ui-service
+  namespace: default
+spec:
+  # type: loadBalancer # this will need to install metalLB load balancer and metal lb will collect ip of noes and make loadbalncer of them 
+  type: ClusterIP # cause we use ingress 
+  selector:
+    app: ui-pod
+  ports:
+    - protocol: TCP
+      port: 3000 # port of service 
+      targetPort: 3000 # port of container will route to it

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-deployment
+  namespace: default
+spec:
+  replicas: 2 # cause it will have most loadwork of app ,the auth serivce run once
+  selector:
+    matchLabels:
+      app: weather-pod 
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 1
+
+  
+
+  template:
+    metadata:
+      labels: 
+        app: weather-pod
+    spec:
+      containers: # no need for docker registry credential cause its public repo 
+        - image: youssef11gaber10/deployment-weather-flask:latest
+          name: weather-container 
+          imagePullPolicy: Always
+          ports:  
+            - containerPort: 5000 # by default for flask
+          env:
+            - name: APIKEY # api key consider a sensitve data so we must bring it from secret
+              valueFrom:
+                secretKeyRef:
+                  name: weather
+                  key: rapid_api_key
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 2
+            successThreshold: 1
+          readinessProbe: # its trivial readness probe no end point estimate latency
+            httpGet:
+              path: /
+              port: 5000
+

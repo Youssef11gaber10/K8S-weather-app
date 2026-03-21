@@ -1,0 +1,125 @@
+# apiVersion: apps/v1
+# kind: StatefulSet
+# metadata:
+#   name: mysql-statefulset
+# spec:
+#   #must specify service name of headless service
+#   serviceName: mysql-headless-service
+#   replicas: 1 #=> this is not mysql cluster
+#   selector:
+#     matchLabels:
+#       app: mysql-pod
+#   template:
+#     metadata:
+#       labels:
+#         app: mysql-pod # this the headlesss service manage them also the statefulset
+#     spec:
+#       containers:
+#         - image: mysql:8.0
+#           name: mysql-container
+#           ports:
+#             - containerPort: 3306  # it just description but we know the container will be open on port 3306 and the sevice make listen on that port it defined that on targetPort 3306
+#           env:
+#             - name: MYSQL_ROOT_PASSWORD # the container of mysql need this env variable is essential for any mysql container
+#               valueFrom:
+#                 secretKeyRef:
+#                   name: mysql-secret
+#                   key: root-password
+
+#           resources:
+#             requests:
+#               memory: "512Mi"
+#               cpu: "200m"
+#             limits:
+#               memory: "1Gi"
+#               cpu: "400m"
+#           #we need to assign pvc to get pv for these pods 
+#           #after we create volumeClaimTemplates attach it as volume to container
+#           volumeMounts:
+#             - name: mysql-data-pvc-claim
+#               mountPath: /var/lib/mysql
+#   volumeClaimTemplates: # for each pod we will ask for pvc so create on level identical to pod (template)
+#    -  metadata:
+#         name: mysql-data-pvc-claim
+#       spec:
+#         accessModes: [ "ReadWriteOnce" ]
+#         resources:
+#           requests:
+#             storage: 5Gi
+#         storageClassName: "standard"
+
+---
+# just for test that i can do same functionality that job done with env variable while create container
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-statefulset
+spec:
+  #must specify service name of headless service
+  serviceName: mysql-headless-service
+  replicas: 1 #=> this is not mysql cluster
+  selector:
+    matchLabels:
+      app: mysql-pod
+  template:
+    metadata:
+      labels:
+        app: mysql-pod # this the headlesss service manage them also the statefulset
+    spec:
+      containers:
+        - image: mysql:8.0
+          name: mysql-container
+          ports:
+            - containerPort: 3306  # it just description but we know the container will be open on port 3306 and the sevice make listen on that port it defined that on targetPort 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD # the container of mysql need this env variable is essential for any mysql container
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: root-password
+             #DO WHAT JOB DONE WITH PREDEFINED ENV VARIABLE     
+            - name: MYSQL_DATABASE ## create DB automatically
+              value: weatherapp_db
+          
+            - name: MYSQL_USER # create user
+              value: gaber
+          
+            - name: MYSQL_PASSWORD # password for that user
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: auth-password
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "400m"
+          #we need to assign pvc to get pv for these pods 
+          #after we create volumeClaimTemplates attach it as volume to container
+          volumeMounts:
+            - name: mysql-data-pvc-claim
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates: # for each pod we will ask for pvc so create on level identical to pod (template)
+   -  metadata:
+        name: mysql-data-pvc-claim
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: "standard"
+
+
+
+
+
+
+
+
+
+
+

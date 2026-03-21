@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service 
+metadata: 
+  name: auth-service
+  namespace: default
+spec:
+  type: ClusterIP # will not expose this sevice to public internet , we only expose the service of UI (frontend) to public and it will be throw the ingress
+  selector:
+    app: auth-pod
+  ports:
+    - protocol: TCP
+      port: 8080 # will open to ip:8080 for internal access like container work on port 8080
+      targetPort: 8080 # the container work on port 8080
