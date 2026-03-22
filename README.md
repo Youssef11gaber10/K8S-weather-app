@@ -1,8 +1,3 @@
-# Weather App on Kubernetes
-
-End-to-end **DevOps exercise**: the same multi-service weather application you would wire with **Docker Compose** is expressed here with **Kubernetes**—declarative manifests, **Ingress + TLS**, **Services** for load balancing, **StatefulSet + PVC** for MySQL, and **Secrets** for credentials. The goal is production-minded packaging: health probes, resource limits, rolling updates, and a clear separation of “edge” vs “app” vs “data.”
-
----
 
 ## Project overview
 
