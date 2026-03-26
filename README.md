@@ -146,6 +146,56 @@ Replace image names in the YAML with your own registry paths after `docker build
 
 ---
 
+## Kustomize overlays (dev / test / prod)
+
+I added a full Kustomize setup under `kustomize/` to deploy the same app to multiple environments with environment-specific settings.
+
+Base and overlays:
+
+- Base manifests: `kustomize/BASE/k8s`
+- Overlays:
+  - `kustomize/Overlay/dev`
+  - `kustomize/Overlay/test`
+  - `kustomize/Overlay/prod`
+
+Environment differences implemented in overlays:
+
+| Environment | Namespace | Replicas (UI/Auth/Weather) | Ingress DNS |
+|-------------|-----------|-----------------------------|-------------|
+| Dev | `dev` | `2 / 2 / 2` | `weatherapp.local.dev.com` |
+| Test | `test` | `3 / 3 / 3` | `weatherapp.local.test.com` |
+| Prod | `prod` | `5 / 5 / 5` | `weatherapp.local.prod.com` |
+
+How to deploy with Kustomize:
+
+```bash
+kubectl create namespace dev
+kubectl create namespace test
+kubectl create namespace prod
+
+kubectl apply -k kustomize/Overlay/dev -n dev
+kubectl apply -k kustomize/Overlay/test -n test
+kubectl apply -k kustomize/Overlay/prod -n prod
+```
+
+Environment comparison diagram:
+
+![Kustomize environment comparison](kustomize/result-images/kustomize-env-comparison.svg)
+
+Browser validation for all 3 environments:
+
+![3 environments in browser](kustomize/result-images/3-env.png)
+
+Workloads validation (`kubectl get all`) for test + dev:
+
+![Workloads in test and dev](kustomize/result-images/workload-test-dev.png)
+
+Workloads validation (`kubectl get all`) for prod:
+
+![Workloads in prod](kustomize/result-images/work-load-prod.png)
+
+---
+
 ## Prerequisites
 
 - Cluster with **NGINX Ingress Controller** and an IngressClass named **`nginx`** (or change `ingressClassName`).
