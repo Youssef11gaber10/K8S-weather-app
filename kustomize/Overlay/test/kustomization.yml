@@ -1,0 +1,35 @@
+resources:
+  - ../../BASE/k8s
+
+replicas:
+  - name: auth-deployment # connect them with name of deployment that specify in metadata of deployment
+    count: 3
+
+  - name: ui-deployment
+    count: 3
+
+  - name: weather-deployment
+    count: 3
+
+  
+patchesStrategicMerge:
+  - replica-num-patch.yml
+  - ingress-change-dns.yml
+# he says this is deprecated best use patches change it here and kustomize.yml in base instead of resources use patches
+
+
+secretGenerator:
+  - name: mysql-secret
+    envs:
+      - ./secrets/mysql-secret.env
+
+
+  - name: tls-secret
+    type: kubernetes.io/tls
+    files:
+      - ./secrets/tls/tls.crt
+      - ./secrets/tls/tls.key
+      
+  - name: weather
+    envs:
+      - ./secrets/weather.env

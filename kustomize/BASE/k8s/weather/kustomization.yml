@@ -1,0 +1,3 @@
+resources:
+  - ./weather-deployment.yml
+  - ./weather-service.yml

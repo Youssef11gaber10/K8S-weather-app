@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+spec:
+  replicas: 5
+
+
+# you can change more things here and will overwrite things in base
+  template:
+    spec:
+      containers:
+        - name: auth-container
+        # - name: auth-container-prod # if you change name of conatiner must pull again cause he think its new one so keep it as it if you wanna try if not present 
+          # image: youssef11gaber10/deployment-auth-go:latest # can change it with him or not change name of container
+          imagePullPolicy: IfNotPresent # is alaways in base
+#so this will over write things in base  
+
+
+# ---
+# you can include other dpeloyement here but we will create patch file for each deployment
+

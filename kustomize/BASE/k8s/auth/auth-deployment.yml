@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  # namespace: default #comment this cause it will be defined in run command with kustomizes
+  # no need for label for deployment it not managed by anything 
+spec:
+  replicas: 1
+  selector: # i will select pods that have that label
+    matchLabels:
+      app: auth-pod # untill know we like create replicasets need to define option of deployement
+      #we can use url label
+      # app.kubernetes.io/name : auth-pod # can be this or that  # if you leave it will be  pods have (app: auth-pod AND app.kubernetes.io/name : auth-pod)
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2 # so we can pe at update increase to 5pods at once (3 essential, 2 new)
+      maxUnavailable:  1 #so i can work with 2 old replica (not less than that) so the 5 will be (2 old , 3 new)
+
+
+
+  template:
+    metadata:
+      labels: 
+        app: auth-pod # this label will auth-deployment  choose its pod
+    spec:
+      containers: # here i need this cluster to have credentials of my docker hub, but it publish image on docker hub no need to login
+        - image: youssef11gaber10/deployment-auth-go:latest # this is go image , so we have service of auth need to write dockerfile to dockarize it and push it docker hub and just pull image here and run on pod
+          name: auth-container
+          imagePullPolicy: Always # always pull the image when you create pod
+          # imagePullPolicy: ifNotPresent #cache the image on node each time we create pod if the image exist will use it and if not exist will pull it
+          ports:
+            - containerPort: 8080 # this is just description like docker file expose 
+          # give to this continaer its env variable needs 
+          #check main.go to know them
+          env:
+            - name: DB_HOST
+              value: mysql-headless-service # this is the name of headless service of mysql
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: "gaber"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: auth-password # will be gaber123
+            - name: DB_NAME
+              value: "weatherapp_db"
+            - name: SECRET_KEY # will use this in its code to sign jwt token
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: secret-jwt # will be secret123
+            - name: AUTH_PORT 
+              value: "8080" # in code he make the port that app run on get its value form env , you can chagne to another port
+              # but leave it like that cause we write in descriptoin it will be 8080
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 2
+            successThreshold: 1
+          

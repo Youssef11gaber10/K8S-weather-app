@@ -1,0 +1,65 @@
+# you can over ride your replicas here  or in relica-patch.yaml 
+# kustomize offer some things if the changes in some things like replicas, IMAGE , ..etc can change it herer no need to make new file and connect with name , then change it
+
+resources: # till him base kustomization.yml dir
+  - ../../BASE/k8s # any things inside base/k8s/kustomization.yml will be included 
+
+patchesStrategicMerge:
+  - ingress-change-dns.yml
+
+# you can change it here 
+replicas:
+  - name: auth-deployment # connect them with name of deployment that specify in metadata of deployment
+    count: 2
+
+
+  - name: weather-deployment
+    count: 2
+
+  - name: ui-deployment
+    count: 2
+
+secretGenerator:
+  - name: mysql-secret
+    envs:
+      - ./secrets/mysql-secret.env
+    # options:
+      # disableNameSuffixHash: true
+
+  - name: tls-secret
+    type: kubernetes.io/tls
+    files:
+      - ./secrets/tls/tls.crt
+      - ./secrets/tls/tls.key
+    # options:
+    #   disableNameSuffixHash: true 
+
+
+  - name: weather
+    envs:
+      - ./secrets/weather.env
+    # options:
+    #   disableNameSuffixHash: true
+
+
+
+# in utility tool here you can override image without create new patch file 
+
+# images:
+#   - name: auth-container # name of contaienr in auth-deployment.yml
+#     newName: youssef11gaber10/deployment-auth-go
+#     newTag: latest  # can change it to another version or tag 
+
+#also if you have config map or secret you can change it here with configmap gernerator or secret generator
+
+# configmapGenerator:
+#   - name: auth-configmap
+#     literals:
+#       - name: DB_HOST
+#         value: mysql-headless-service
+
+# secretGenerator:
+#   - name: auth-secret
+#     literals:
+#       - name: DB_PASSWORD
+#         value: gaber123

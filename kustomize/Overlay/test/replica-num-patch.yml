@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment
+spec:
+  replicas: 3
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-deployment
+spec:
+  replicas: 3

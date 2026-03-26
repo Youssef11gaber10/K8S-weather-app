@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment
+  # namespace: default #comment this cause it will be defined in run command with kustomize
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ui-pod
+  
+
+
+
+  template:
+    metadata:
+      labels:
+        app: ui-pod
+    spec:
+      containers:
+        - image: youssef11gaber10/deployment-ui-react:latest
+          name: ui-container
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000 # will be 80 when we implement nginx 
+          env:
+
+          # this env for this container work on port 3000 and verify jwt token
+            - name : PORT
+              value: "3000"
+            - name: SECRET_KEY #we give this to auth to sign jwt ,here we use it to verify jwt , the front make sure user have token before call any service
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret  
+                  key: secret-jwt
+
+            # for connect weather service
+            - name: WEATHER_HOST
+              value: "weather-service"
+            - name: WEATHER_PORT
+              value: "5000"
+
+            # for connect auth service
+            - name: AUTH_HOST
+              value: "auth-service"
+              #value: "auth-service.default.svc.cluster.local" # can be also FQDN , here you put it as fqdn but for default namespace, so when work on diff dev can't reach auth that work on dev
+            - name: AUTH_PORT
+              value: "8080"
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1024Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 5
+            failureThreshold: 2
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            
+
+            
+            

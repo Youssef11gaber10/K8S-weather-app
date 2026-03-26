@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment
+spec:
+  replicas: 5
+
+
+# you can change more things here and will overwrite things in base
+  template:
+    spec:
+      containers:
+        - name: ui-container # can't change name of container even if you put the image he matches with it 
+          image: youssef11gaber10/deployment-ui-react:latest # in prod always pull the new one 
+          # imagePullPolicy: IfNotPresent # is alaways in base
+#so this will over write things in base  
+
+
+# ---
+# you can include other dpeloyement here but we will create patch file for each deployment
+

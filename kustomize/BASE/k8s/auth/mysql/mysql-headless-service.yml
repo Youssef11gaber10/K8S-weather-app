@@ -1,0 +1,16 @@
+# we say this service is like normal serivce just have cluster IP none , cause it work with its DNS to show the ips of db behind her
+apiVersion: v1
+kind : Service 
+metadata:
+  name: mysql-headless-service
+  # namespace: default #comment this cause it will be defined in run command with kustomize
+spec:
+  clusterIP: None # most important thing here
+  selector: #catch the pods of stateful set on that label 
+    app: mysql-pod # i want pods that have label 'app: mysql-pod'
+
+  ports:
+    - protocol: TCP
+      port : 3306 # this service will open its port 3306 , so any one want talk to this service on dns:3306
+      targetPort: 3306 # will talk with its container's pod on 3306 
+

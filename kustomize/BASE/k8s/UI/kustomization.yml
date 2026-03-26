@@ -1,0 +1,4 @@
+resources:
+  - ./ingress.yml
+  - ./ui-service.yml
+  - ./ui-deployment.yml

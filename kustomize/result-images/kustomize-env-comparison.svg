@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <style>
+      .title { font: 700 42px Arial, sans-serif; fill: #212529; }
+      .subtitle { font: 400 24px Arial, sans-serif; fill: #495057; }
+      .head { font: 700 30px Arial, sans-serif; fill: #ffffff; }
+      .text { font: 500 22px Arial, sans-serif; fill: #212529; }
+      .small { font: 500 19px Arial, sans-serif; fill: #495057; }
+      .dns { font: 600 18px Arial, sans-serif; fill: #0d6efd; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="900" fill="#ffffff"/>
+  <text x="40" y="60" class="title">Kustomize Environment Comparison - Weather App</text>
+  <text x="40" y="88" class="subtitle">Same base manifests, environment-specific overlays (replicas, DNS, secrets)</text>
+
+  <!-- DEV -->
+  <rect x="40" y="150" width="492" height="640" rx="16" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  <rect x="40" y="150" width="492" height="72" rx="16" fill="#198754"/>
+  <text x="60" y="196" class="head">DEV</text>
+  <text x="62" y="270" class="text">Namespace: dev</text>
+  <text x="62" y="312" class="text">Replicas: 2 each</text>
+  <rect x="58" y="338" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="76" y="372" class="small">Ingress -> ui-service:3000</text>
+  <rect x="58" y="406" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="76" y="440" class="small">ui-deployment (2 replicas)</text>
+  <rect x="58" y="474" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="76" y="508" class="small">auth-deployment (2 replicas)</text>
+  <rect x="58" y="542" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="76" y="576" class="small">weather-deployment (2 replicas)</text>
+  <rect x="58" y="620" width="456" height="86" rx="10" fill="#eef3ff" stroke="#bfd0ff"/>
+  <text x="76" y="655" class="small">Ingress Host</text>
+  <text x="76" y="684" class="dns">weatherapp.local.dev.com</text>
+
+  <!-- TEST -->
+  <rect x="554" y="150" width="492" height="640" rx="16" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  <rect x="554" y="150" width="492" height="72" rx="16" fill="#0d6efd"/>
+  <text x="574" y="196" class="head">TEST</text>
+  <text x="576" y="270" class="text">Namespace: test</text>
+  <text x="576" y="312" class="text">Replicas: 3 each</text>
+  <rect x="572" y="338" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="590" y="372" class="small">Ingress -> ui-service:3000</text>
+  <rect x="572" y="406" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="590" y="440" class="small">ui-deployment (3 replicas)</text>
+  <rect x="572" y="474" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="590" y="508" class="small">auth-deployment (3 replicas)</text>
+  <rect x="572" y="542" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="590" y="576" class="small">weather-deployment (3 replicas)</text>
+  <rect x="572" y="620" width="456" height="86" rx="10" fill="#eef3ff" stroke="#bfd0ff"/>
+  <text x="590" y="655" class="small">Ingress Host</text>
+  <text x="590" y="684" class="dns">weatherapp.local.test.com</text>
+
+  <!-- PROD -->
+  <rect x="1068" y="150" width="492" height="640" rx="16" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  <rect x="1068" y="150" width="492" height="72" rx="16" fill="#dc3545"/>
+  <text x="1088" y="196" class="head">PROD</text>
+  <text x="1090" y="270" class="text">Namespace: prod</text>
+  <text x="1090" y="312" class="text">Replicas: 5 each</text>
+  <rect x="1086" y="338" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="1104" y="372" class="small">Ingress -> ui-service:3000</text>
+  <rect x="1086" y="406" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="1104" y="440" class="small">ui-deployment (5 replicas)</text>
+  <rect x="1086" y="474" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="1104" y="508" class="small">auth-deployment (5 replicas)</text>
+  <rect x="1086" y="542" width="456" height="56" rx="10" fill="#ffffff" stroke="#dee2e6"/>
+  <text x="1104" y="576" class="small">weather-deployment (5 replicas)</text>
+  <rect x="1086" y="620" width="456" height="86" rx="10" fill="#eef3ff" stroke="#bfd0ff"/>
+  <text x="1104" y="655" class="small">Ingress Host</text>
+  <text x="1104" y="684" class="dns">weatherapp.local.prod.com</text>
+
+  <line x1="40" y1="830" x2="1560" y2="830" stroke="#dee2e6" stroke-width="2"/>
+  <text x="40" y="865" class="small">Replica strategy: DEV=2, TEST=3, PROD=5 using Kustomize overlays on top of the same base manifests.</text>
+</svg>

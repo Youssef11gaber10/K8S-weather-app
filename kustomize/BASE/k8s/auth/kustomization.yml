@@ -1,0 +1,6 @@
+resources:
+  - ./auth-deployment.yml
+  - ./auth-service.yml
+  - ./mysql/mysql-headless-service.yml
+  - ./mysql/mysql-statefulset.yml
+  - ./mysql/init-mysql-job.yml

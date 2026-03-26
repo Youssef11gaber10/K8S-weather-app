@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-deployment
+spec:
+  replicas: 5
+
+
+# you can change more things here and will overwrite things in base
+  template:
+    spec:
+      containers:
+        - name: weather-container # can't change name of container must put same name , or change name with image , so this will pull another image so will not rely on the one in node , if not present after first run from here 
+          # image: youssef11gaber10/deployment-weather-react:latest 
+          imagePullPolicy: IfNotPresent #  is alaways in base # so i just change this and he will use the old image installed from dev name space apply -k
+#so this will over write things in base  
+
+
+# ---
+# you can include other dpeloyement here but we will create patch file for each deployment
+

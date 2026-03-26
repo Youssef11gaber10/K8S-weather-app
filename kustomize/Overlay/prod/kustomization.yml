@@ -1,0 +1,29 @@
+resources:
+  - ../../BASE/k8s
+
+# change in file 
+# there some things you can change it here in kustomization file ,have its way here , or if not have way easier in kustomization file , edited in patch file 
+patchesStrategicMerge:
+  - replica-num-patch-auth.yml
+  - replica-num-patch-weather.yml
+  - replica-num-patch-ui.yml
+  - ingress-change-dns.yml
+
+secretGenerator:
+  - name: mysql-secret
+    envs:
+      - ./secrets/mysql-secret.env
+
+  - name: tls-secret
+    type: kubernetes.io/tls
+    files:
+      - ./secrets/tls/tls.crt
+      - ./secrets/tls/tls.key
+ # we will create it manullay later 
+
+  - name: weather
+    envs:
+      - ./secrets/weather.env
+
+
+

@@ -1,0 +1,15 @@
+# this gonna be resources differ from environment to another one like dev,test,prod => deployement in ui/auth/weather we change num of replicas at each environment
+# so here i include all files will have overlay further
+resources: 
+  # - ./auth/auth-deployment.yml
+  # - ./UI/ui-deployment.yml
+  # - ./weather/weather-deployment.yml
+  # i will include all folders 
+
+  - ./auth/
+  - ./weather/
+  - ./UI/
+
+
+# so cause you will do apply -k so want include all your app should include all your application not only the changes files 
+# not only the changes i include all of them cause even if i not change apply them with kubectl apply -k 

@@ -1,0 +1,61 @@
+#so this job do what ? 
+# have mysql image it's like client pod, will connect to db server on another pod
+# take the db_host => where this server exist to connect on it 
+# we used to do this in docker compose db_host =name of service of db in docker compose
+# and internal dns will resolve to ip of db container
+# here write dns of headless service and it will resolve to ip of pod of statefulset
+# here we have one replica pod of stateful set cause we don't use mysql cluster
+# so dns will resolve to ip of pod of statefulset just on ip not many ips to choose from 
+# also we know we can do same functionality that job done with env variable while create container of mysql in statefulset
+#like DB_USER, , DB_USER_PASSWORD ,DB_NAME  => predefined env variable in mysql image to do same functionality
+apiVersion : batch/v1
+kind: Job 
+metadata:
+  name: mysql-init-job
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+      containers:
+      - image: mysql:8.0 # this image have mysql clinet, cause i will connect to mysql server apply the commands from here job pod to stateful pod
+        name: mysql-job-container
+        #what i will on that container of pod is to make some sql statemets on pod of mysql statefulset
+        # command: ["/bin/sh", "-c", "mysql -h ${DB_HOST} -P ${DB_PORT} -u ${DB_USER} -p ${MYSQL_ROOT_PASSWORD} < /docker-entrypoint-initdb.d/init.sql"]
+        env:
+          - name:  MYSQL_ROOT_PASSWORD # this for auth to mysql server
+            valueFrom: # its value from secret
+              secretKeyRef:
+                name: mysql-secret
+                key: root-password
+          - name: DB_USER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql-secret
+                key: auth-password 
+          #some variable will need to connect to mysql statefulset
+          - name: DB_HOST # this service of mysql stateful set , => same as we do in docker compose when write name of service as db host and the internal dns will resolve to ip of contianer
+          # here also the db host must be name of service (headless service) and k8s dns will provide the ip of pods under this serivce , here will be one pod so this pod connect to itself
+            value: "mysql-headless-service"
+          - name: DB_PORT # i will connect to service on port 3306 , cause in headless service i define port 3306 to container to accept connection
+            value: "3306"
+            # no i make this job can connect to pod of statefulset on port 3306 ,now i will do command 
+        command: ["/bin/sh","-c"]
+        args: 
+        - |
+          mysql -h ${DB_HOST} -P ${DB_PORT} -uroot -p${MYSQL_ROOT_PASSWORD} <<EOF
+          CREATE DATABASE IF NOT EXISTS weatherapp_db;
+          CREATE USER IF NOT EXISTS 'gaber'@'%' IDENTIFIED BY '${DB_USER_PASSWORD}';
+          GRANT ALL PRIVILEGES ON weatherapp_db.* TO 'gaber'@'%';
+          FLUSH PRIVILEGES;
+          EOF
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+      restartPolicy: Never # for pod so on leve of container identation
+# here he take the value from MY_SQL_ROOT and this env variable takes value from secret
+# we do in statefulset lab he takes its value like db port here as plaintext so it not secure
